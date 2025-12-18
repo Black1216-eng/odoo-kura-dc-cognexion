@@ -18,17 +18,31 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      # --- ROUTER 1: Web Principal (Puerto 8069) ---
-      # Atiende todo el tráfico normal de Odoo
+
+      # ==========================================
+      # ROUTER 1: WEB (Puerto 8069)
+      # ==========================================
       - "traefik.http.routers.odoo-web.rule=Host(`dc-cognexion.kuraehr.com`)"
       - "traefik.http.routers.odoo-web.entrypoints=websecure"
       - "traefik.http.routers.odoo-web.tls.certresolver=letsencrypt"
+      
+      # ### NUEVO: OBLIGAMOS a este router a usar el servicio 'odoo-web'
+      - "traefik.http.routers.odoo-web.service=odoo-web"
+      
+      # Definición del servicio 'odoo-web'
       - "traefik.http.services.odoo-web.loadbalancer.server.port=8069"
-      # --- ROUTER 2: Chat / WebSockets (Puerto 8072) ---
-      # Atiende SOLO las peticiones que van a /websocket
+
+      # ==========================================
+      # ROUTER 2: CHAT (Puerto 8072)
+      # ==========================================
       - "traefik.http.routers.odoo-chat.rule=Host(`dc-cognexion.kuraehr.com`) && PathPrefix(`/websocket`)"
       - "traefik.http.routers.odoo-chat.entrypoints=websecure"
       - "traefik.http.routers.odoo-chat.tls.certresolver=letsencrypt"
+      
+      # ### NUEVO: OBLIGAMOS a este router a usar el servicio 'odoo-chat'
+      - "traefik.http.routers.odoo-chat.service=odoo-chat"
+      
+      # Definición del servicio 'odoo-chat'
       - "traefik.http.services.odoo-chat.loadbalancer.server.port=8072"
     networks:
       - kura_net
