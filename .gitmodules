@@ -1,0 +1,3 @@
+[submodule "odoo_core"]
+	path = odoo_core
+	url = https://github.com/Black1216-eng/odoo-kura-core.git
