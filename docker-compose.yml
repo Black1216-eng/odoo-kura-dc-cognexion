@@ -10,6 +10,7 @@ services:
       PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - filestore:/var/lib/odoo
+      - ./odoo_core/addons:/mnt/extra-addons
       - ./odoo.conf:/etc/odoo.conf:ro
     command: ["odoo", "-c", "/etc/odoo.conf"]
     expose:
