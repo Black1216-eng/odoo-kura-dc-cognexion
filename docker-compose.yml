@@ -4,9 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      odoo-db:
-        condition: service_healthy
     environment:
       HOST: postgres
       USER: odoo
