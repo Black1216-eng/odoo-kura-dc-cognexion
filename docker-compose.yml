@@ -1,28 +1,14 @@
 services:
-  odoo-db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: dc_cognexion
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - db:/var/lib/postgresql/data
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
-    command: -c config_file=/etc/postgresql/postgresql.conf
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odoo"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   odoo:
-    image: ghcr.io/black1216-eng/odoo-kura-core:4631ffba3b13517a8eee8de60046e19c6b9ec1cd
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       odoo-db:
         condition: service_healthy
     environment:
-      HOST: odoo-db
+      HOST: postgres
       USER: odoo
       PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -32,7 +18,13 @@ services:
     expose:
       - "8069"
     restart: unless-stopped
+    networks:
+      - kura_net
 
 volumes:
   db:
   filestore:
+
+networks:
+  kura_net:
+    external: true
